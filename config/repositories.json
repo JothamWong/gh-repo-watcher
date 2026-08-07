@@ -1,0 +1,16 @@
+{
+    "repositories": [
+        {
+            "name": "test",
+            "repository": "JothamWong/test",
+            "branch": "main",
+            "enabled": true
+        },
+        {
+            "name": "test2",
+            "repository": "JothamWong/test2",
+            "branch": "main",
+            "enabled": true
+        }
+    ]
+}
