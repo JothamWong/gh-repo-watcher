@@ -7,6 +7,7 @@ import json
 import os
 from urllib.request import Request, urlopen
 from urllib.parse import quote
+from html import escape
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPOS_JSON_PATH = PROJECT_ROOT / "config" / "repositories.json"
@@ -117,7 +118,7 @@ def send_telegram_message(message: str) -> None:
     if not chat_id:
         print("TELEGRAM_CHAT_ID environment variable is not set.")
         return
-    
+
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload = json.dumps(
         {
@@ -141,6 +142,7 @@ def send_telegram_message(message: str) -> None:
     except Exception as _:
         print("Something went wrong here")
 
+
 def construct_github_url(repo_name: str) -> str:
     return f"https://github.com/{repo_name}"
 
@@ -151,7 +153,7 @@ def format_repo_update_message(
     lines = ["Repositories with changes:"]
     for i, (repo_name, (repo, state)) in enumerate(updates.items(), start=1):
         repo_url = construct_github_url(repo_name)
-        lines.append(f'{i}. <a href="{repo_url}">{repo.friendly_name}</a>')
+        lines.append(f'{i}. <a href="{repo_url}">{escape(repo.friendly_name)}</a>')
     return "\n".join(lines)
 
 
