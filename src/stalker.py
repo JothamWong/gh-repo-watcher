@@ -12,10 +12,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 REPOS_JSON_PATH = PROJECT_ROOT / "config" / "repositories.json"
 STATE_JSON_PATH = PROJECT_ROOT / "state" / "last-seen.json"
 
+
 # --- GitHub stuff ---
 @dataclass(frozen=True, slots=True)
 class StalkedGitHubRepo:
-    name: str
+    friendly_name: str
     repository: str
     branch: str
     enabled: bool
@@ -23,7 +24,7 @@ class StalkedGitHubRepo:
     @classmethod
     def from_dict(cls, data: Any):
         return StalkedGitHubRepo(
-            name=data["name"],
+            friendly_name=data["name"],
             repository=data["repository"],
             branch=data["branch"],
             enabled=data["enabled"],
@@ -131,6 +132,20 @@ def send_telegram_message(message: str) -> None:
         print(f"Failed to send Telegram message: {resp}")
 
 
+def construct_github_url(repo_name: str) -> str:
+    return f"https://github.com/{repo_name}"
+
+
+def format_repo_update_message(
+    updates: dict[str, tuple[StalkedGitHubRepo, GitHubRepoState]],
+) -> str:
+    lines = ["Repositories with changes:"]
+    for i, (repo_name, (repo, state)) in enumerate(updates.items(), start=1):
+        repo_url = construct_github_url(repo_name)
+        lines.append(f'{i}. <a href="{repo_url}">{repo.friendly_name}</a>')
+    return "\n".join(lines)
+
+
 # --- File utilities ---
 def load_stalkee_json(path: Path = REPOS_JSON_PATH) -> list[StalkedGitHubRepo]:
     with open(path, "r", encoding="utf-8") as f:
@@ -165,32 +180,32 @@ def main():
         filter(lambda repo: repo.enabled, all_stalked_repos)
     )
     all_last_states = load_last_state_json()
-    repo_names = {repo.name for repo in stalked_repos}
+    repo_names = {repo.repository for repo in stalked_repos}
     last_states = dict(
         filter(
             lambda state: state[0] in repo_names,
             all_last_states.items(),
         )
     )
-    updates: dict[str, GitHubRepoState] = {}
+    updates: dict[str, tuple[StalkedGitHubRepo, GitHubRepoState]] = {}
 
     for stalked_repo in stalked_repos:
-        state = all_last_states.get(stalked_repo.name, None)
+        state = all_last_states.get(stalked_repo.repository, None)
         has_new_commit, newest_state = get_is_new_and_commit(
             stalked_repo.repository,
             stalked_repo.branch,
             state.last_seen_commit if state is not None else "",
         )
         if has_new_commit and newest_state is not None:
-            updates[stalked_repo.name] = newest_state
+            updates[stalked_repo.repository] = (stalked_repo, newest_state)
 
     if updates:
-        msg = "Repositories with changes:"
-        for i, repo_name in enumerate(updates.keys()):
-            msg += f"\n{i + 1}. {repo_name}"
+        msg = format_repo_update_message(updates)
         send_telegram_message(msg)
 
-    last_states.update(updates)
+    state_updates = {repository: state for repository, (_, state) in updates.items()}
+
+    last_states.update(state_updates)
     save_last_state_json(last_states)
 
 
