@@ -2,7 +2,7 @@ name: Monitor GitHub repositories
 
 on:
   schedule:
-    - cron: "18 8 * * *"
+    - cron: "0 12 * * *"
   workflow_dispatch:
 
 permissions:
