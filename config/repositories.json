@@ -1,9 +1,9 @@
 {
     "repositories": [
         {
-            "name": "test",
-            "repository": "JothamWong/test",
-            "branch": "main",
+            "name": "mental2008 papers",
+            "repository": "mental2008/awesome-papers",
+            "branch": "develop",
             "enabled": true
         },
         {
