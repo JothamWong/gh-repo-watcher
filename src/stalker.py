@@ -78,9 +78,8 @@ def get_latest_github_commit(
         with urlopen(request, timeout=10) as response:
             resp = json.load(response)
     except HTTPError as error:
-        body = error.read().decode("utf-8", errors="replace")
         print(
-            f"Error while fetching latest commit for {repository}:{branch}: {error.code} {error.reason} {body}"
+            f"Error while fetching latest commit for {repository}:{branch}: {error.code} {error.reason}"
         )
         return None
 
@@ -129,7 +128,7 @@ def send_telegram_message(message: str) -> None:
     with urlopen(request, timeout=10) as response:
         resp = json.load(response)
     if not resp.get("ok", False):
-        print(f"Failed to send Telegram message: {resp}")
+        print("Failed to send Telegram message.")
 
 
 def construct_github_url(repo_name: str) -> str:
