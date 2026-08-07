@@ -43,15 +43,11 @@ The last-seen.json file is updated per github actions workflow (if there is a ch
 ```json
 {
   "repositories": {
-    "vscode": {
-      "github_repo_official_name": "microsoft/vscode",
-      "branch": "main",
+    "microsoft/vscode": {
       "last_seen_commit": "0123456789abcdef0123456789abcdef01234567",
       "last_checked_at": "2026-08-07T04:15:32Z"
     },
-    "cpython": {
-      "github_repo_official_name": "python/cpython",
-      "branch": "main",
+    "python/cpython": {
       "last_seen_commit": "abcdef0123456789abcdef0123456789abcdef01",
       "last_checked_at": "2026-08-07T04:15:35Z"
     }
