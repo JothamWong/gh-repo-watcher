@@ -54,3 +54,7 @@ The last-seen.json file is updated per github actions workflow (if there is a ch
   }
 }
 ```
+
+Here is an example of a telegram message that your bot will send you if there are indeed updates:
+
+![](media/telegram_msg.png)
