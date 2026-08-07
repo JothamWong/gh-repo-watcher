@@ -108,8 +108,16 @@ def get_is_new_and_commit(
 
 # --- Telegram ---
 def send_telegram_message(message: str) -> None:
-    bot_token = os.environ["TELEGRAM_BOT_TOKEN"]
-    chat_id = os.environ["TELEGRAM_CHAT_ID"]
+    bot_token = os.environ.get("TELEGRAM_BOT_TOKEN", None)
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID", None)
+    if not bot_token:
+        print("TELEGRAM_BOT_TOKEN environment variable is not set.")
+        return
+
+    if not chat_id:
+        print("TELEGRAM_CHAT_ID environment variable is not set.")
+        return
+    
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload = json.dumps(
         {
@@ -125,11 +133,13 @@ def send_telegram_message(message: str) -> None:
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urlopen(request, timeout=10) as response:
-        resp = json.load(response)
-    if not resp.get("ok", False):
-        print("Failed to send Telegram message.")
-
+    try:
+        with urlopen(request, timeout=10) as response:
+            resp = json.load(response)
+        if not resp.get("ok", False):
+            print("Failed to send Telegram message.")
+    except Exception as _:
+        print("Something went wrong here")
 
 def construct_github_url(repo_name: str) -> str:
     return f"https://github.com/{repo_name}"
