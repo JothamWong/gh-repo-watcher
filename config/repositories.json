@@ -11,6 +11,12 @@
             "repository": "JothamWong/test2",
             "branch": "main",
             "enabled": true
-        }
+        },
+        {
+            "name": "teng ma",
+            "repository": "stmatengss/stmatengss.github.io",
+            "branch": "main",
+            "enabled": true
+        },
     ]
 }
