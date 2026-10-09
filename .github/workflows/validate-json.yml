@@ -1,0 +1,14 @@
+name: Validate repositories JSON
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'config/repositories.json'
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Validate JSON syntax
+              run: jq empty config/repositories.json
